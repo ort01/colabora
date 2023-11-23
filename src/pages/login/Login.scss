@@ -1,0 +1,48 @@
+.login {
+    font-size: 1.6rem;
+
+    &__form {
+        max-width: 30rem;
+        margin: 6rem auto;
+        padding: 2rem;
+
+        & h2 {
+            letter-spacing: 0.2rem;
+            color: $color-blue-green;
+            text-align: center;
+        }
+
+        & label {
+            display: block;
+            margin: 2.5rem auto;
+            background-color: #fff;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            box-sizing: border-box;
+            box-shadow: rgba(0, 0, 0, 0.217) 0 0.1rem 0.4rem;
+        }
+
+        & span {
+            display: block;
+            letter-spacing: 0.2rem;
+            margin-left: 0.6rem;
+            font-size: 1.6rem;
+        }
+
+        & input {
+            font-size: 1.6rem;
+            color: $color-blue-navy;
+            border: none;
+            width: 90%;
+            transition: all 0.1s;
+
+            &::placeholder {
+                color: $color-teal;
+            }
+
+            &:focus {
+                outline: none;
+            }
+        }
+    }
+}

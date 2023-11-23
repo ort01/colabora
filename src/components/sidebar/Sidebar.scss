@@ -1,0 +1,61 @@
+.sidebar {
+    width: 30rem;
+    min-width: 30rem;
+    background: $color-blue-green;
+    min-height: 100vh;
+    box-sizing: border-box;
+    position: relative;
+    color: $color-white;
+
+    &__content {
+        position: fixed;
+        width: inherit;
+    }
+
+    &__user {
+        font-weight: bold;
+        font-size: 1.6rem;
+        text-align: center;
+        letter-spacing: 1px;
+        padding: 4rem 3rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    &__links {
+        margin-top: 8rem;
+        margin-left: 2rem;
+
+        & li {
+            margin-top: 1rem;
+            font-size: 1.6rem;
+        }
+
+        & a {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            text-decoration: none;
+            width: 100%;
+            color: $color-white;
+            box-sizing: border-box;
+
+            &.active {
+                color: $color-blue-green;
+                background: $color-white;
+                border-radius: 2rem 0 0 2rem;
+            }
+        }
+
+        & img {
+            width: 2.7rem;
+            margin-right: 1rem;
+            filter: $color-white-svg;
+        }
+
+        & .active {
+            & img {
+                filter: $color-blue-green-svg;
+            }
+        }
+    }
+}

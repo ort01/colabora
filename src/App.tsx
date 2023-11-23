@@ -13,6 +13,8 @@ import Login from "./pages/login/Login.jsx"
 import Signup from "./pages/signup/Signup.jsx"
 import Create from './pages/create/Create.js'
 import Project from './pages/project/Project.js'
+import Navbar from './components/navbar/Navbar.js'
+import Sidebar from './components/sidebar/Sidebar.js'
 
 
 
@@ -23,14 +25,17 @@ function App() {
 
   const unsub = onAuthStateChanged(auth, (user) => {
     dispatch(authState(user))
+
     unsub()
   })
 
   return (
-    <>
+    <div className='app'>
       {authReady &&
         <BrowserRouter>
-          <div className='container'>
+          {user && <Sidebar />}
+          <div className='app__container'>
+            <Navbar />
             <Routes>
               <Route path="/" element={user ? <Home /> : <Navigate to="login" />} />
               <Route path="/create" element={user ? <Create /> : <Navigate to="login" />} />
@@ -41,7 +46,7 @@ function App() {
           </div>
         </BrowserRouter>
       }
-    </>
+    </div>
   )
 }
 

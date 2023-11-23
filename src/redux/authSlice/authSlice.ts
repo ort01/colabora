@@ -29,6 +29,7 @@ const initialState: AuthState = {
     authReady: false
 }
 
+
 //-----------------Async thunk for firebase signup, login, signout-----------------
 //SIGNUP
 export const signup = createAsyncThunk('auth/signup', async ({ email, password, name }: userAuth) => {
@@ -41,10 +42,12 @@ export const signup = createAsyncThunk('auth/signup', async ({ email, password, 
         await updateProfile(res.user, {
             displayName: name
         })
+
         return res.user
 
     } catch (err) {
         console.log(err);
+        throw Error("Oops, something went wrong, awkward")
     }
 })
 //LOGIN
@@ -58,6 +61,8 @@ export const login = createAsyncThunk('auth/login', async ({ email, password }: 
 
     } catch (err) {
         console.log(err);
+        throw Error("Invalid email or password")
+        // return err
     }
 })
 //LOGOUT
@@ -82,21 +87,7 @@ export const authSlice = createSlice({
         authState: (state, action: PayloadAction<User | null>) => {
             state.user = action.payload
             state.authReady = true
-        },
-        // login2: (state, { payload }: { type: string, payload: userAuth }) => {
-        //     state.user = null
-        //     state.loading = true
-        //     state.error = null
-        //     createUserWithEmailAndPassword(auth, payload.email, payload.password).then((res) => {
-        //         state.user = res.user
-        //         state.loading = false
-        //         state.error = null
-        //     }).catch((err) => {
-        //         state.user = null
-        //         state.loading = true
-        //         state.error = err
-        //     })
-        // }
+        }
     },
     extraReducers: (builder) => {
         builder

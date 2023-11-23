@@ -19,8 +19,6 @@ export default function Login() {
         dispatch(login({ email, password }))
     }
 
-
-
     return (
         <>
             <div className="login">
