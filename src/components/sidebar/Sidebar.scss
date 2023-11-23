@@ -13,12 +13,15 @@
     }
 
     &__user {
-        font-weight: bold;
         font-size: 1.6rem;
         text-align: center;
         letter-spacing: 1px;
-        padding: 4rem 3rem;
+        padding: 10rem 3rem 1rem;
         border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+
+        &--name {
+            font-weight: bold;
+        }
     }
 
     &__links {

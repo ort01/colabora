@@ -55,18 +55,23 @@
         align-items: center;
         gap: 0.5rem;
         padding: 0.5rem 1rem;
+        border: 1px solid $color-teal;
         border-radius: 0.5rem;
-        background-color: $color-teal;
-        color: $color-white;
+        color: $color-teal;
         cursor: pointer;
         transition: all 0.2s;
 
         & img {
-            filter: $color-white-svg;
+            filter: $color-teal-svg;
         }
 
         &:hover {
+            color: $color-white;
             background-color: $color-blue-green;
+
+            & img {
+                filter: $color-white-svg;
+            }
         }
 
         &--name {

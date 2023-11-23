@@ -31,7 +31,7 @@ export default function Navbar() {
                     </>
                     :
                     <li>
-                        <button className="btn" onClick={() => { dispatch(logout()) }}>Logout</button>
+                        <button className="navbar__logout" onClick={() => { dispatch(logout()) }}>Logout</button>
                     </li>
                 }
 

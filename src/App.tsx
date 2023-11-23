@@ -37,9 +37,9 @@ function App() {
           <div className='app__container'>
             <Navbar />
             <Routes>
-              <Route path="/" element={user ? <Home /> : <Navigate to="login" />} />
-              <Route path="/create" element={user ? <Create /> : <Navigate to="login" />} />
-              <Route path="/project/:id/*" element={user ? <Project /> : <Navigate to="login" />} />
+              <Route path="/" element={user ? <Home /> : <Navigate to="/login" />} />
+              <Route path="/create" element={user ? <Create /> : <Navigate to="/login" />} />
+              <Route path="/project/:id/*" element={user ? <Project /> : <Navigate to="/login" />} />
               <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
               <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/" />} />
             </Routes>

@@ -115,7 +115,7 @@ export default function Signup() {
                         />
                         <div className="signup__file">
                             <img src={UploadFileIcon} alt="upload-file-icon" />
-                            <div>Select thumbnail</div>
+                            <div>Browse...</div>
                         </div>
                         {thumbnailError && <div className="error">{thumbnailError}</div>}
                         {thumbnail && <div className="signup__file--name">{thumbnail.name}</div>}

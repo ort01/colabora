@@ -1,23 +1,76 @@
-import { createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
+//redux
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
+//firebase
+import { db } from '../../firebase/config'
+import { addDoc, collection, deleteDoc, doc, serverTimestamp } from 'firebase/firestore'
 
 
 // -----------type for slice STATE---------
 interface firestoreState {
-    document: object | undefined,
+    document: object | null,
     loading: boolean,
-    error?: Error | undefined,
-    success: boolean | undefined
+    error?: Error | null,
+    success: boolean | null
 }
+interface ProjectDoc {
+    id?: string | null
+    uid?: string | null
+    title: string
+    content: number | string
+}
+
+interface firestoreAdd {
+    colName: string,
+    doc: ProjectDoc
+}
+interface firestoreDelete {
+    colName: string,
+    docId: string
+}
+
+
 
 // -----------Defining initial state-------
 const initialState: firestoreState = {
-    document: undefined,
+    document: null,
     loading: false,
-    error: undefined,
-    success: undefined
+    error: null,
+    success: null
 }
+
+//-----------------Async thunk for firebase signup, login, signout-----------------
+// ADD
+export const addDocument = createAsyncThunk('firestore/add', async ({ colName, doc }: firestoreAdd) => {
+    const colRef = collection(db, colName)
+
+    try {
+        const createdAt = serverTimestamp() //creating a timestamp
+
+        const addedDoc = await addDoc(colRef, { ...doc, createdAt })
+
+        return addedDoc
+
+    } catch (err) {
+        console.log(err);
+        throw Error("Oops, something went wrong with adding the document")
+    }
+
+})
+//DELETE
+export const deleteDocument = createAsyncThunk('firestore/delete', async ({ colName, docId }: firestoreDelete) => {
+
+    try {
+        const docRef = doc(db, colName, docId)
+        await deleteDoc(docRef)
+
+    } catch (err) {
+        console.log(err);
+        throw Error("Oops, something went wrong with deleting the document")
+    }
+})
+
+
 
 //--------------SLICE------------------
 export const firestoreSlice = createSlice({
@@ -25,41 +78,49 @@ export const firestoreSlice = createSlice({
     initialState,
 
     reducers: {
-        firestoreLoading: (state) => {
-            state.document = undefined
-            state.loading = true
-            state.error = undefined
-            state.success = undefined
-        },
-        firestoreError: (state, action: PayloadAction<Error>) => {
-            state.document = undefined
-            state.loading = false
-            state.error = action.payload
-            state.success = false
-        },
-        firestoreAddDoc: (state, action: PayloadAction<object>) => {
-            state.document = action.payload
-            state.loading = false
-            state.error = undefined
-            state.success = true
-        },
-        firestoreDeleteDoc: (state) => {
-            state.document = undefined
-            state.loading = false
-            state.error = undefined
-            state.success = true
-        }
 
     },
+    extraReducers: (builder) => {
+        builder
+            //ADD
+            .addCase(addDocument.fulfilled, (state, action) => {
+                state.document = action.payload
+                state.loading = false
+                state.error = null
+                state.success = true
+            })
+            .addCase(addDocument.pending, (state) => {
+                state.loading = true
+            })
+            .addCase(addDocument.rejected, (state, action) => {
+                state.document = null
+                state.loading = false
+                state.error = { name: 'UnknownError', message: "UnknownError", ...action.error }
+                state.success = false
+            })
+            //DELETE
+            .addCase(deleteDocument.fulfilled, (state) => {
+                state.document = null
+                state.loading = false
+                state.error = null
+                state.success = true
+            })
+            .addCase(deleteDocument.pending, (state) => {
+                state.loading = true
+            })
+            .addCase(deleteDocument.rejected, (state, action) => {
+                state.loading = false
+                state.error = { name: 'UnknownError', message: "UnknownError", ...action.error }
+                state.success = false
+            })
+    }
 })
 
 
 //getting the actions separately
-export const { firestoreLoading, firestoreError, firestoreAddDoc, firestoreDeleteDoc } = firestoreSlice.actions
+// export const { } = firestoreSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
-export const selectLoading = (state: RootState) => state.firestore.loading
-export const selectDocument = (state: RootState) => state.firestore.document
-export const selectError = (state: RootState) => state.firestore.error
+export const selectFirestore = (state: RootState) => state.firestore
 
 export default firestoreSlice.reducer
