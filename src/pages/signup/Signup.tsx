@@ -1,11 +1,11 @@
 //styles
-import "./Signup.scss"
 import UploadFileIcon from "../../assets/upload-file_icon.svg"
+import "./Signup.scss"
 //react
 import { useState } from "react"
 //redux
-import { selectAuth, signup } from "../../redux/authSlice/authSlice"
 import { useDispatch, useSelector } from "react-redux"
+import { selectAuth, signup } from "../../redux/authSlice/authSlice"
 import { AppDispatch } from "../../redux/store"
 
 
@@ -59,7 +59,7 @@ export default function Signup() {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        dispatch(signup({ email, password, name }))
+        dispatch(signup({ email, password, name, thumbnail }))
     }
 
 
@@ -121,13 +121,21 @@ export default function Signup() {
                         {thumbnail && <div className="signup__file--name">{thumbnail.name}</div>}
                     </label>
                     {loading ?
-                        <button className="form-btn" disabled style={{ opacity: ".5" }}>Loading...</button>
+                        <button
+                            className="form-btn"
+                            disabled
+                            style={{
+                                opacity: ".5", backgroundColor: "$color-blue-green",
+                                color: "$color-white"
+                            }}>
+                            Loading...
+                        </button>
                         :
                         <button className="form-btn">Signup</button>
                     }
                     {error && <p className="error">{error.message}</p>}
                 </form>
-            </div>
+            </div >
         </>
 
     )

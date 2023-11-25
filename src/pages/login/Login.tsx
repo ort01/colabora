@@ -1,8 +1,8 @@
 import { useState } from "react"
-import "./Login.scss"
 import { useDispatch, useSelector } from "react-redux"
-import { selectAuth, login } from "../../redux/authSlice/authSlice"
+import { login, selectAuth } from "../../redux/authSlice/authSlice"
 import { AppDispatch } from "../../redux/store"
+import "./Login.scss"
 
 export default function Login() {
     //state
@@ -45,7 +45,15 @@ export default function Login() {
                         />
                     </label>
                     {loading ?
-                        <button className="form-btn" disabled style={{ opacity: ".5" }}>Loading...</button>
+                        <button
+                            className="form-btn"
+                            disabled
+                            style={{
+                                opacity: ".5", backgroundColor: "$color-blue-green",
+                                color: "$color-white"
+                            }}>
+                            Loading...
+                        </button>
                         :
                         <button className="form-btn">Login</button>
                     }

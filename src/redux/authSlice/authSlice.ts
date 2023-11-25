@@ -1,21 +1,18 @@
 //redux
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
-import type { RootState } from '../store'
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import type { RootState } from '../store';
 //firebase
 import { User, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
-import { auth } from '../../firebase/config';
+import { doc, setDoc } from 'firebase/firestore';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { auth, db, storage } from '../../firebase/config';
+
 
 
 // -----------type for slice STATE---------
-interface UserState {
-    uid: string
-    email: string
-    displayName: string
-}
-
 interface AuthState {
-    user: UserState | null | undefined
+    user: User | null | undefined
     loading: boolean
     error: Error | null
     authReady: boolean
@@ -25,6 +22,8 @@ interface userAuth {
     email: string,
     password: string,
     name?: string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    thumbnail?: any
 }
 
 // -----------Defining initial state-------
@@ -35,51 +34,75 @@ const initialState: AuthState = {
     authReady: false
 }
 
-export const getUserState = (user: User): UserState => {
-    return {
-        uid: user.uid,
-        displayName: user.displayName || 'Unknown Name',
-        email: user.email || 'no-email',
-    }
-}
+// export const getUserState = (user: User): UserState => {
+//     return {
+//         uid: user.uid,
+//         displayName: user.displayName || 'Unknown Name',
+//         email: user.email || 'no-email',
+//     }
+// }
 
 
 //-----------------Async thunk for firebase signup, login, signout-----------------
-//SIGNUP
-export const signup = createAsyncThunk('auth/signup', async ({ email, password, name }: userAuth) => {
+//--- SIGNUP ---
+export const signup = createAsyncThunk('auth/signup', async ({ email, password, name, thumbnail }: userAuth) => {
     try {
         const res = await createUserWithEmailAndPassword(auth, email, password)
         if (!res) {
             throw new Error("Could not complete signup")
         }
 
+        //upload user thumbnail
+        const uploadPath = `thumbnails/${res.user.uid}/${thumbnail?.name}`
+        const storageRef = ref(storage, uploadPath)
+
+        const img = await uploadBytes(storageRef, thumbnail);
+        console.log('File uploaded successfully:', img);
+
+        const imgRef = img.ref;
+        const imgUrl = await getDownloadURL(imgRef);
+        console.log('Download URL:', imgUrl);
+
+
+        // add display name to user
         await updateProfile(res.user, {
-            displayName: name
+            displayName: name,
+            photoURL: imgUrl,
         })
 
-        return getUserState(res.user)
+        //create user document
+        const userDocRef = doc(db, "users", res.user.uid); // creates a doc in colection "users" with the ID we pass in
+        await setDoc(userDocRef, {
+            online: true,
+            displayName: name,
+            photoURL: imgUrl,
+        })
+
+        return res.user
 
     } catch (err) {
         console.log(err);
-        throw Error("Oops, something went wrong, awkward")
+        throw Error("Oops, something went wrong, check the console")
     }
 })
-//LOGIN
+
+//--- LOGIN ---
 export const login = createAsyncThunk('auth/login', async ({ email, password }: userAuth) => {
     try {
         const res = await signInWithEmailAndPassword(auth, email, password)
         if (!res) {
             throw new Error("Could not complete login")
         }
-        return getUserState(res.user)
+        return res.user
 
     } catch (err) {
         console.log(err);
-        throw Error("Invalid email or password")
+        throw Error("Oops, something went wrong, check the console")
         // return err
     }
 })
-//LOGOUT
+
+//--- LOGOUT ---
 export const logout = createAsyncThunk('auth/logout', async () => {
     try {
         await signOut(auth)
@@ -91,6 +114,8 @@ export const logout = createAsyncThunk('auth/logout', async () => {
 
 
 
+
+
 //--------------SLICE------------------
 export const authSlice = createSlice({
     name: 'auth',
@@ -98,7 +123,7 @@ export const authSlice = createSlice({
     initialState,
 
     reducers: {
-        authState: (state, action: PayloadAction<UserState | null>) => {
+        authState: (state, action: PayloadAction<User | null>) => {
             state.user = action.payload
             state.authReady = true
         }
