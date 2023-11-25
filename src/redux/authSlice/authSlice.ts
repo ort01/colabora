@@ -4,7 +4,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
 //firebase
 import { User, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { auth, db, storage } from '../../firebase/config';
 
@@ -93,6 +93,12 @@ export const login = createAsyncThunk('auth/login', async ({ email, password }: 
         if (!res) {
             throw new Error("Could not complete login")
         }
+        const user = auth.currentUser //getting the current user object
+        if (user) {
+            const userDocRef = doc(db, "users", user.uid) // getting a reference to a document
+            await updateDoc(userDocRef, { online: true }) // updating the doc
+        }
+
         return res.user
 
     } catch (err) {
@@ -105,7 +111,14 @@ export const login = createAsyncThunk('auth/login', async ({ email, password }: 
 //--- LOGOUT ---
 export const logout = createAsyncThunk('auth/logout', async () => {
     try {
-        await signOut(auth)
+        //update online status
+        const user = auth.currentUser //getting the current user object
+        if (user) {
+            const userDocRef = doc(db, "users", user.uid) // getting a reference to a document
+            await updateDoc(userDocRef, { online: false }) // updating the doc
+        }
+        await signOut(auth) // logging out
+
 
     } catch (err) {
         console.log(err);

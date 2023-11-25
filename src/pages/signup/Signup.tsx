@@ -125,8 +125,8 @@ export default function Signup() {
                             className="form-btn"
                             disabled
                             style={{
-                                opacity: ".5", backgroundColor: "$color-blue-green",
-                                color: "$color-white"
+                                opacity: ".5", backgroundColor: "#006884",
+                                color: "#f2f1ef"
                             }}>
                             Loading...
                         </button>

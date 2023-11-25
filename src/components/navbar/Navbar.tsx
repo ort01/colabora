@@ -1,16 +1,16 @@
 //styles
-import "./Navbar.scss"
 import colabora from "../../assets/colabora.svg"
+import "./Navbar.scss"
 //react
 import { Link } from "react-router-dom"
 //redux
-import { logout, selectAuth } from '../../redux/authSlice/authSlice.js'
 import { useDispatch, useSelector } from "react-redux"
+import { logout, selectAuth } from '../../redux/authSlice/authSlice.js'
 import { AppDispatch } from "../../redux/store.js"
 
 export default function Navbar() {
 
-    const { user } = useSelector(selectAuth)
+    const { user, loading } = useSelector(selectAuth)
     const dispatch = useDispatch<AppDispatch>()
 
     return (
@@ -31,7 +31,21 @@ export default function Navbar() {
                     </>
                     :
                     <li>
-                        <button className="navbar__logout" onClick={() => { dispatch(logout()) }}>Logout</button>
+                        {loading ?
+                            <button
+                                className="navbar__logout"
+                                disabled
+                                onClick={() => { dispatch(logout()) }}
+                                style={{
+                                    opacity: ".5", backgroundColor: "#006884",
+                                    color: "#f2f1ef"
+                                }}>
+                                Logging out...</button>
+                            :
+                            <button
+                                className="navbar__logout"
+                                onClick={() => { dispatch(logout()) }}>
+                                Logout</button>}
                     </li>
                 }
 
