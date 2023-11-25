@@ -8,8 +8,14 @@ import { auth } from '../../firebase/config';
 
 
 // -----------type for slice STATE---------
+interface UserState {
+    uid: string
+    email: string
+    displayName: string
+}
+
 interface AuthState {
-    user: User | null | undefined
+    user: UserState | null | undefined
     loading: boolean
     error: Error | null
     authReady: boolean
@@ -29,6 +35,14 @@ const initialState: AuthState = {
     authReady: false
 }
 
+export const getUserState = (user: User): UserState => {
+    return {
+        uid: user.uid,
+        displayName: user.displayName || 'Unknown Name',
+        email: user.email || 'no-email',
+    }
+}
+
 
 //-----------------Async thunk for firebase signup, login, signout-----------------
 //SIGNUP
@@ -43,7 +57,7 @@ export const signup = createAsyncThunk('auth/signup', async ({ email, password, 
             displayName: name
         })
 
-        return res.user
+        return getUserState(res.user)
 
     } catch (err) {
         console.log(err);
@@ -57,7 +71,7 @@ export const login = createAsyncThunk('auth/login', async ({ email, password }: 
         if (!res) {
             throw new Error("Could not complete login")
         }
-        return res.user
+        return getUserState(res.user)
 
     } catch (err) {
         console.log(err);
@@ -84,7 +98,7 @@ export const authSlice = createSlice({
     initialState,
 
     reducers: {
-        authState: (state, action: PayloadAction<User | null>) => {
+        authState: (state, action: PayloadAction<UserState | null>) => {
             state.user = action.payload
             state.authReady = true
         }

@@ -3,7 +3,7 @@ import './App.scss'
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
 //redux
 import { useDispatch, useSelector } from 'react-redux'
-import { authState, selectAuth } from './redux/authSlice/authSlice.js'
+import { authState, getUserState, selectAuth } from './redux/authSlice/authSlice.js'
 //firebase
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from './firebase/config'
@@ -15,6 +15,7 @@ import Create from './pages/create/Create.js'
 import Project from './pages/project/Project.js'
 import Navbar from './components/navbar/Navbar.js'
 import Sidebar from './components/sidebar/Sidebar.js'
+import { useEffect } from 'react'
 
 
 
@@ -23,11 +24,15 @@ function App() {
   const dispatch = useDispatch()
   const { authReady, user } = useSelector(selectAuth)
 
-  const unsub = onAuthStateChanged(auth, (user) => {
-    dispatch(authState(user))
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        dispatch(authState(getUserState(user)))
+        unsub()
+      }
+    })
+  }, [dispatch])
 
-    unsub()
-  })
 
   return (
     <div className='app'>
