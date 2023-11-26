@@ -52,8 +52,10 @@ export const signup = createAsyncThunk('auth/signup', async ({ email, password, 
             throw new Error("Could not complete signup")
         }
 
+        const user = res.user
+
         //upload user thumbnail
-        const uploadPath = `thumbnails/${res.user.uid}/${thumbnail?.name}`
+        const uploadPath = `thumbnails/${user.uid}/${thumbnail?.name}`
         const storageRef = ref(storage, uploadPath)
 
         const img = await uploadBytes(storageRef, thumbnail);
@@ -65,20 +67,20 @@ export const signup = createAsyncThunk('auth/signup', async ({ email, password, 
 
 
         // add display name to user
-        await updateProfile(res.user, {
+        await updateProfile(user, {
             displayName: name,
             photoURL: imgUrl,
         })
 
         //create user document
-        const userDocRef = doc(db, "users", res.user.uid); // creates a doc in colection "users" with the ID we pass in
-        await setDoc(userDocRef, {
+        const userDocRef = doc(db, "users", user.uid); // creates a doc in colection "users" with the ID we pass in
+        await setDoc(userDocRef, { //setting the document with properties
             online: true,
             displayName: name,
             photoURL: imgUrl,
         })
 
-        return res.user
+        return user
 
     } catch (err) {
         console.log(err);
@@ -93,13 +95,17 @@ export const login = createAsyncThunk('auth/login', async ({ email, password }: 
         if (!res) {
             throw new Error("Could not complete login")
         }
-        const user = auth.currentUser //getting the current user object
+
+        const user = res.user // current user object
+
         if (user) {
             const userDocRef = doc(db, "users", user.uid) // getting a reference to a document
-            await updateDoc(userDocRef, { online: true }) // updating the doc
+            await updateDoc(userDocRef, { // updating the doc
+                online: true
+            })
         }
 
-        return res.user
+        return user
 
     } catch (err) {
         console.log(err);
@@ -115,10 +121,12 @@ export const logout = createAsyncThunk('auth/logout', async () => {
         const user = auth.currentUser //getting the current user object
         if (user) {
             const userDocRef = doc(db, "users", user.uid) // getting a reference to a document
-            await updateDoc(userDocRef, { online: false }) // updating the doc
+            await updateDoc(userDocRef, { // updating the doc
+                online: false
+            })
         }
-        await signOut(auth) // logging out
 
+        await signOut(auth) // logging out
 
     } catch (err) {
         console.log(err);

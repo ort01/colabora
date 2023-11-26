@@ -11,6 +11,7 @@ import { auth } from './firebase/config'
 import { useEffect } from 'react'
 import Navbar from './components/navbar/Navbar.js'
 import Sidebar from './components/sidebar/Sidebar.js'
+import UsersSidebar from './components/users-sidebar/UsersSidebar.js'
 import Create from './pages/create/Create.js'
 import Home from "./pages/home/Home.js"
 import Login from "./pages/login/Login.jsx"
@@ -50,6 +51,7 @@ function App() {
               <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/" />} />
             </Routes>
           </div>
+          {user && <UsersSidebar />}
         </BrowserRouter>
       }
     </div>

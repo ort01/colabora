@@ -1,0 +1,37 @@
+.users-list {
+    width: 25rem;
+    min-width: 25rem;
+    padding: 3rem;
+    box-sizing: border-box;
+    background-color: #fff;
+    color: $color-blue-navy;
+
+    & h2 {
+        text-align: right;
+        margin-bottom: 4rem;
+        padding-bottom: 1rem;
+        border-bottom: 0.1rem solid $color-teal;
+        font-size: 2rem;
+    }
+
+    &__user {
+        font-size: 1.5rem;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 1rem;
+        margin: 2rem auto;
+
+        & .online {
+            background-color: rgb(75, 182, 75);
+            border-radius: 50%;
+            height: 1rem;
+            width: 1rem;
+        }
+
+        & .avatar {
+            width: 4rem;
+            height: 4rem;
+        }
+    }
+}
