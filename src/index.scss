@@ -29,19 +29,6 @@ ul {
   font-size: 1em;
   display: inline-block;
 }
-.btn {
-  background: #fff;
-  padding: 0.8rem 1.2rem;
-  border-radius: 0.4rem;
-  color: $color-blue-green;
-  cursor: pointer;
-  font-size: 1.6rem;
-  border: 0.1rem solid $color-blue-green;
-}
-.btn:hover {
-  color: #fff;
-  background-color: $color-blue-green;
-}
 
 /* forms */
 label {
@@ -62,11 +49,18 @@ textarea {
   width: 100%;
   box-sizing: border-box;
   border: 0.1rem solid #ddd;
-  border-radius: 0.4rem;
+  border-radius: 1rem;
+
+  &:focus {
+    outline: none;
+  }
 }
 
 textarea {
-  min-height: 1.6rem;
+  min-height: 10rem;
+  max-height: 25rem;
+  min-width: 100%;
+  max-width: 100%;
 }
 
 .error {

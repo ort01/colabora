@@ -1,0 +1,18 @@
+.create-form {
+    font-size: 1.5rem;
+    margin: 10rem 0 0 10rem;
+    max-width: 600px;
+
+    & h2 {
+        font-size: 2rem;
+        color: $color-blue-navy;
+    }
+
+    & label {
+        color: $color-blue-green;
+
+        & span {
+            letter-spacing: 1px;
+        }
+    }
+}

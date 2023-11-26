@@ -2,8 +2,10 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
 //firebase
-import { db } from '../../firebase/config'
 import { addDoc, collection, deleteDoc, doc, serverTimestamp } from 'firebase/firestore'
+import { db } from '../../firebase/config'
+//ts
+import { ProjectDocument } from '../../interfaces/Collections'
 
 
 // -----------type for slice STATE---------
@@ -13,16 +15,10 @@ interface firestoreState {
     error?: Error | null,
     success: boolean | null
 }
-interface ProjectDoc {
-    id?: string | null
-    uid?: string | null
-    title: string
-    content: number | string
-}
 
 interface firestoreAdd {
     colName: string,
-    doc: ProjectDoc
+    doc: ProjectDocument
 }
 interface firestoreDelete {
     colName: string,
