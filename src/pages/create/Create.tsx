@@ -7,6 +7,11 @@ import Select from "react-select"
 import { useCollection } from "../../hooks/useCollection"
 //ts
 import { UserDocument } from "../../interfaces/Collections"
+//redux
+import { Timestamp } from "firebase/firestore"
+import { useSelector } from "react-redux"
+import { selectAuth } from "../../redux/authSlice/authSlice"
+
 
 // function* mapIter<T, U>(iterable: IterableIterator<T>, callback: ((a: T) => U)): Iterable<U> {
 //     for (const x of iterable) {
@@ -25,6 +30,9 @@ export default function Create() {
 
     //asign users
     const { documents } = useCollection("users")
+
+    //get logged in user
+    const { user } = useSelector(selectAuth)
 
     //options
     const categories = [
@@ -48,7 +56,32 @@ export default function Create() {
             return
         }
 
-        console.log(category, assignedUsers);
+        const createdBy = { //current logged in user who created the project
+            uid: user?.uid,
+            displayName: user?.displayName,
+            photoURL: user?.photoURL
+        }
+
+        const assignedUsersList = assignedUsers.map((user) => { // adjusting the assignedusers objects
+            return {
+                uid: user.id,
+                displayName: user.displayName,
+                photoURL: user.photoURL
+            }
+        })
+
+        const project = {
+            name: name,
+            details: details,
+            dueDate: Timestamp.fromDate(new Date(dueDate)),
+            category: category,
+            assignedUsersList: assignedUsersList,
+            comments: [],
+            createdBy: createdBy
+        }
+
+        console.log(project);
+
 
     }
 
