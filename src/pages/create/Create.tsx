@@ -1,7 +1,7 @@
 //styles
 import "./Create.scss"
 //react
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import Select from "react-select"
 //hooks
 import { useCollection } from "../../hooks/useCollection"
@@ -20,12 +20,13 @@ export default function Create() {
     const [details, setDetails] = useState<string>('')
     const [dueDate, setDueDate] = useState<string>('')
     const [category, setCategory] = useState<string | undefined>('')
-    const [assignedUsers, setAssignedUsers] = useState<{ value: UserDocument, label: string }[] | []>([])
+    const [assignedUsers, setAssignedUsers] = useState<UserDocument[] | []>([])
+    const [formError, setFormError] = useState<string | null>(null)
 
     //asign users
     const { documents } = useCollection("users")
-    const [users, setUsers] = useState<{ value: UserDocument, label: string }[] | []>([])
 
+    //options
     const categories = [
         { value: 'development', label: 'Development' },
         { value: 'design', label: 'Design' },
@@ -33,20 +34,20 @@ export default function Create() {
         { value: 'marketing', label: 'Marketing' },
     ]
 
-
-    useEffect(() => {
-
-        if (documents) {
-            const options = documents.map((user) => {
-                return { value: user, label: user.displayName }
-            })
-            setUsers(options)
-        }
-    }, [documents])
-
-
+    //functions
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+        setFormError(null)
+
+        if (!category) {
+            setFormError("Please select a project category")
+            return
+        }
+        if (!assignedUsers.length) { //empty error = true
+            setFormError("Please asign the project to at least 1 user")
+            return
+        }
+
         console.log(category, assignedUsers);
 
     }
@@ -85,20 +86,19 @@ export default function Create() {
                     <span>Category</span>
                     <Select
                         options={categories}
-                        required
                         onChange={(option) => setCategory(option?.value)}
                     />
                 </label>
                 <label>
                     <span>Assign to</span>
                     <Select
-                        options={users}
+                        options={documents?.map((doc) => { return { label: doc.displayName, value: doc } })}
                         isMulti
-                        onChange={(option) => setAssignedUsers([...option])}
+                        onChange={(options) => setAssignedUsers(options.map((option) => option.value))}
                     />
                 </label>
-
                 <button className="form-btn create-form__btn">Add Project</button>
+                {formError && <p className="error">{formError}</p>}
             </form>
         </div>
     )
