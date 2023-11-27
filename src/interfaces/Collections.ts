@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase/firestore"
 
 //users collection
 export interface UserDocument {
@@ -9,11 +10,22 @@ export interface UserDocument {
 
 //projects collection
 export interface ProjectDocument {
-    id?: string | null
-    uid?: string | null
-    name: string
-    details: string
-    dueDate: string,
+    id?: string,
+    name: string,
+    details: string,
+    dueDate: Timestamp,
     category: string,
-    assignedUsers: UserDocument[] | [],
+    assignedUsersList: shrinkedUserObject[],
+    comments: string[],
+    createdBy: shrinkedUserObject
+}
+
+
+
+
+// ---- adjusted user object from create page
+interface shrinkedUserObject {
+    uid: string,
+    displayName: string,
+    photoURL: string
 }

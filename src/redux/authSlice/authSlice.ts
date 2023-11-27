@@ -14,7 +14,7 @@ import { auth, db, storage } from '../../firebase/config';
 interface AuthState {
     user: User | null | undefined
     loading: boolean
-    error: Error | null
+    authSliceError: Error | null
     authReady: boolean
 }
 
@@ -30,7 +30,7 @@ interface userAuth {
 const initialState: AuthState = {
     user: null,
     loading: false,
-    error: null,
+    authSliceError: null,
     authReady: false
 }
 
@@ -155,7 +155,7 @@ export const authSlice = createSlice({
             .addCase(signup.fulfilled, (state, action) => {
                 state.user = action.payload
                 state.loading = false
-                state.error = null
+                state.authSliceError = null
             })
             .addCase(signup.pending, (state) => {
                 state.loading = true
@@ -163,13 +163,13 @@ export const authSlice = createSlice({
             .addCase(signup.rejected, (state, action) => {
                 state.user = null
                 state.loading = false
-                state.error = { name: 'UnknownError', message: "UnknownError", ...action.error }
+                state.authSliceError = { name: 'UnknownError', message: "UnknownError", ...action.error }
             })
             //LOGIN
             .addCase(login.fulfilled, (state, action) => {
                 state.user = action.payload
                 state.loading = false
-                state.error = null
+                state.authSliceError = null
             })
             .addCase(login.pending, (state) => {
                 state.loading = true
@@ -177,13 +177,13 @@ export const authSlice = createSlice({
             .addCase(login.rejected, (state, action) => {
                 state.user = null
                 state.loading = false
-                state.error = { name: 'UnknownError', message: "UnknownError", ...action.error }
+                state.authSliceError = { name: 'UnknownError', message: "UnknownError", ...action.error }
             })
             //LOGOUT
             .addCase(logout.fulfilled, (state) => {
                 state.user = null
                 state.loading = false
-                state.error = null
+                state.authSliceError = null
             })
             .addCase(logout.pending, (state) => {
                 state.loading = true
@@ -191,7 +191,7 @@ export const authSlice = createSlice({
             .addCase(logout.rejected, (state, action) => {
                 state.user = null
                 state.loading = false
-                state.error = { name: 'UnknownError', message: "UnknownError", ...action.error }
+                state.authSliceError = { name: 'UnknownError', message: "UnknownError", ...action.error }
             })
     }
 })

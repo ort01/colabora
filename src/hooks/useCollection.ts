@@ -4,19 +4,19 @@ import { useEffect, useRef, useState } from "react"
 import { OrderByDirection, Query, WhereFilterOp, collection, onSnapshot, orderBy, query, where } from "firebase/firestore"
 import { db } from "../firebase/config"
 //ts
-import { UserDocument } from "../interfaces/Collections.ts"
 
 
 
 //--------------------- subscribing to a real time data from a firestore collection --------------------
 
-export const useCollection = (
+
+
+export const useCollection = <T>(
     colName: string,
     _query?: [string, WhereFilterOp, unknown?],
-    _orderBy?: [string, OrderByDirection]
-) => {
+    _orderBy?: [string, OrderByDirection]): { documents: T[] | undefined, error: string | undefined } => {
 
-    const [documents, setDocuments] = useState<UserDocument[] | undefined>(undefined)
+    const [documents, setDocuments] = useState<T[] | undefined>(undefined)
     const [error, setError] = useState<string | undefined>(undefined)
 
     const queryRef = useRef(_query).current //if we dont use a ref -> infitine loop in useEffect; _query is an array and is "different" on every function call
@@ -38,12 +38,12 @@ export const useCollection = (
         const unsub = onSnapshot(colRef, (snapshot) => {
 
             if (!snapshot.empty) {
-                const results: UserDocument[] = []
+                const results: T[] = []
 
                 const res = snapshot.docs // storing data from the snapshot; getting array of documents that are on the snapshot of collection
 
                 res.forEach((doc) => {
-                    results.push({ id: doc.id, ...doc.data() } as UserDocument)
+                    results.push({ id: doc.id, ...doc.data() } as T)
                 })
                 setDocuments(results)
                 setError(undefined)

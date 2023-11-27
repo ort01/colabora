@@ -6,11 +6,14 @@ import Select from "react-select"
 //hooks
 import { useCollection } from "../../hooks/useCollection"
 //ts
-import { UserDocument } from "../../interfaces/Collections"
+import { ProjectDocument, UserDocument } from "../../interfaces/Collections"
 //redux
 import { Timestamp } from "firebase/firestore"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import { useNavigate } from "react-router"
 import { selectAuth } from "../../redux/authSlice/authSlice"
+import { addDocument, selectFirestore } from "../../redux/firestoreSlice/firestoreSlice"
+import { AppDispatch } from "../../redux/store"
 
 
 // function* mapIter<T, U>(iterable: IterableIterator<T>, callback: ((a: T) => U)): Iterable<U> {
@@ -20,6 +23,10 @@ import { selectAuth } from "../../redux/authSlice/authSlice"
 // }
 
 export default function Create() {
+
+    const dispatch = useDispatch<AppDispatch>()
+    const navigate = useNavigate()
+
     //form values
     const [name, setName] = useState<string>('')
     const [details, setDetails] = useState<string>('')
@@ -29,10 +36,11 @@ export default function Create() {
     const [formError, setFormError] = useState<string | null>(null)
 
     //asign users
-    const { documents } = useCollection("users")
+    const { documents } = useCollection<UserDocument>("users")
 
-    //get logged in user
-    const { user } = useSelector(selectAuth)
+    //redux
+    const { user } = useSelector(selectAuth) //get logged in user
+    const { fireStoreSliceError } = useSelector(selectFirestore)
 
     //options
     const categories = [
@@ -43,7 +51,7 @@ export default function Create() {
     ]
 
     //functions
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setFormError(null)
 
@@ -80,9 +88,11 @@ export default function Create() {
             createdBy: createdBy
         }
 
-        console.log(project);
-
-
+        //adding the project doc through redux
+        await dispatch(addDocument({ colName: "projects", doc: project as ProjectDocument }))
+        if (!fireStoreSliceError) {
+            navigate("/")
+        }
     }
 
     return (

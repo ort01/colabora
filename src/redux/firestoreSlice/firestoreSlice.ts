@@ -12,7 +12,7 @@ import { ProjectDocument } from '../../interfaces/Collections'
 interface firestoreState {
     document: object | null,
     loading: boolean,
-    error?: Error | null,
+    fireStoreSliceError?: Error | null,
     success: boolean | null
 }
 
@@ -31,7 +31,7 @@ interface firestoreDelete {
 const initialState: firestoreState = {
     document: null,
     loading: false,
-    error: null,
+    fireStoreSliceError: null,
     success: null
 }
 
@@ -82,7 +82,7 @@ export const firestoreSlice = createSlice({
             .addCase(addDocument.fulfilled, (state, action) => {
                 state.document = action.payload
                 state.loading = false
-                state.error = null
+                state.fireStoreSliceError = null
                 state.success = true
             })
             .addCase(addDocument.pending, (state) => {
@@ -91,14 +91,14 @@ export const firestoreSlice = createSlice({
             .addCase(addDocument.rejected, (state, action) => {
                 state.document = null
                 state.loading = false
-                state.error = { name: 'UnknownError', message: "UnknownError", ...action.error }
+                state.fireStoreSliceError = { name: 'UnknownError', message: "UnknownError", ...action.error }
                 state.success = false
             })
             //DELETE
             .addCase(deleteDocument.fulfilled, (state) => {
                 state.document = null
                 state.loading = false
-                state.error = null
+                state.fireStoreSliceError = null
                 state.success = true
             })
             .addCase(deleteDocument.pending, (state) => {
@@ -106,7 +106,7 @@ export const firestoreSlice = createSlice({
             })
             .addCase(deleteDocument.rejected, (state, action) => {
                 state.loading = false
-                state.error = { name: 'UnknownError', message: "UnknownError", ...action.error }
+                state.fireStoreSliceError = { name: 'UnknownError', message: "UnknownError", ...action.error }
                 state.success = false
             })
     }
